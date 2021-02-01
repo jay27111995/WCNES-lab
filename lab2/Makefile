@@ -7,5 +7,5 @@ APPS=serial-shell
 
 all: $(CONTIKI_PROJECT)
 
-CONTIKI = ../..
+CONTIKI = /home/wcnes/contiki-ng-wcnes
 include $(CONTIKI)/Makefile.include
