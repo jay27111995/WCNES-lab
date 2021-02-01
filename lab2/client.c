@@ -62,7 +62,7 @@ PROCESS_THREAD(accel_process, ev, data) {
   {
     int16_t x;
     static int16_t x_old; 
-    const int16_t error_val = 50; 
+    const int16_t error_val = 100; 
 
     /* Register the event used for lighting up an LED when interrupt strikes. */
     ledOff_event = process_alloc_event();
@@ -83,9 +83,9 @@ PROCESS_THREAD(accel_process, ev, data) {
 
     while (1) {
 	    x = accm_read_axis(X_AXIS);
-	    printf("x: %d \n", x);
+	    printf("x: %d x_old: %d \n", x, x_old);
         
-        if ((x_old + error_val) > x) {
+        if ((x_old + error_val) < x) {
             process_post(&client_process, client_send_msg_event, NULL);  
 
             leds_on(LEDS_BLUE);
@@ -147,10 +147,9 @@ PROCESS_THREAD(client_process, ev, data) {
 #endif 
 		PROCESS_WAIT_EVENT_UNTIL(ev == client_send_msg_event); 
 
-		leds_toggle(LEDS_RED);
 		/* Copy the string "hej" into the packet buffer. */
-		memcpy(nullnet_buf, &msg1, sizeof(msg1));
-    nullnet_len = sizeof(msg1);
+        memcpy(nullnet_buf, &msg1, sizeof(msg1));
+        nullnet_len = sizeof(msg1);
 
 		/* Send the content of the packet buffer using the
 		 * broadcast handle. */
