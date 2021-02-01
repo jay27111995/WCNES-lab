@@ -1,4 +1,4 @@
-# Contiki network configuration
+# Contiki etwork configuration
 MAKE_MAC = MAKE_MAC_CSMA
 MAKE_NET = MAKE_NET_NULLNET
 
