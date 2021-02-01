@@ -66,7 +66,7 @@ PROCESS_THREAD(accel_process, ev, data) {
 
     /* Set what strikes the corresponding interrupts. Several interrupts per pin is 
       possible. For the eight possible interrupts, see adxl345.h and adxl345 datasheet. */
-    accm_set_irq(ADXL345_INT_ACTIVITY);
+    accm_set_irq(ADXL345_INT_ACTIVITY, ADXL345_INT_DISABLE);
 
     while (1) {
 	    x = accm_read_axis(X_AXIS);
@@ -96,12 +96,12 @@ static void recv(const void *data, uint16_t len,
 
 /* Our main process. */
 PROCESS_THREAD(client_process, ev, data) {
-    static char msg1[] = "hej";
-    static char msg2[] = "hej";
-
 	PROCESS_BEGIN();
 
 #if 0 
+    static char msg1[] = "hej";
+    static char msg2[] = "hej";
+
 	/* Activate the button sensor. */
 	SENSORS_ACTIVATE(button_sensor);
 
