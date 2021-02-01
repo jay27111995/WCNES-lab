@@ -110,16 +110,15 @@ PROCESS_THREAD(accel_process, ev, data) {
  *
  * As the client does not need to receive, the function does not do anything
  */
-#if 0 
 static void recv(const void *data, uint16_t len,
   const linkaddr_t *src, const linkaddr_t *dest) {
 }
-#endif
 
 /* Our main process. */
 PROCESS_THREAD(client_process, ev, data) {
 	PROCESS_BEGIN();
 
+    static char payload[10] = {0};
     static uint8_t msg1 = SIGNAL_INTRUSION_DETECTED;
 #if 0 
     static char msg1[] = "hej";
