@@ -8,8 +8,8 @@
 #include "net/nullnet/nullnet.h"
 
 
-#define LED_INT_ONTIME        CLOCK_SECOND
-#define ACCM_READ_INTERVAL    CLOCK_SECOND/100
+#define LED_INT_ONTIME        CLOCK_SECOND * 2 
+#define ACCM_READ_INTERVAL    CLOCK_SECOND/100 //Sampling rare 
 
 #define SIGNAL_INTRUSION_DETECTED 1
 #define SIGNAL_BUTTON_PRESSED 1
@@ -62,7 +62,7 @@ PROCESS_THREAD(accel_process, ev, data) {
   {
     int16_t x;
     static int16_t x_old; 
-    const int16_t error_val = 100; 
+    const int16_t error_val = 5; 
 
     /* Register the event used for lighting up an LED when interrupt strikes. */
     ledOff_event = process_alloc_event();
