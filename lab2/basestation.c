@@ -118,7 +118,7 @@ static void recv(const void *data, uint16_t len,
         msg_button_flag = 1;
     }
 
-    etimer_set(&led_3_timer, LED_INT_ONTIME);
+    etimer_set(&led_3_Timer, LED_INT_ONTIME);
     printf("Msg recieved from client\n");
 }
 
