@@ -90,6 +90,8 @@ PROCESS_THREAD(accel_process, ev, data) {
 
             leds_on(LEDS_BLUE);
             process_post(&led_process, ledOff_event, NULL);
+
+	        printf("Msg to led client process sent\n");
         }
 
         x_old = x;
@@ -146,6 +148,7 @@ PROCESS_THREAD(client_process, ev, data) {
 			data == &button_sensor);
 #endif 
 		PROCESS_WAIT_EVENT_UNTIL(ev == client_send_msg_event); 
+        printf("Msg recieved from accelerometer\n");
 
 		/* Copy the string "hej" into the packet buffer. */
         memcpy(nullnet_buf, &msg1, sizeof(msg1));

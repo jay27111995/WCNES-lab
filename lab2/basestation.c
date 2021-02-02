@@ -53,6 +53,7 @@ static void recv(const void *data, uint16_t len,
     leds_off(LEDS_ALL);
     leds_on(count & 0b1111);
     process_post(&led_process, ledOff_event, NULL);
+    printf("Msg recieved from client\n");
 }
 
 /* Our main process. */
