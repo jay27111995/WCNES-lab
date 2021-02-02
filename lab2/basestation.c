@@ -8,6 +8,9 @@
 
 #define LED_INT_ONTIME (CLOCK_SECOND * 10) // Keep the LEDs On for 10s 
 
+
+static process_event_t ledOff_event;
+
 /* Declare our "main" process, the basestation_process */
 PROCESS(basestation_process, "Clicker basestation");
 PROCESS(led_process, "LED handling process");
