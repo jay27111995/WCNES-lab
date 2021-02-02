@@ -40,18 +40,12 @@ PROCESS_THREAD(led_process, ev, data) {
   PROCESS_END();
 }
 
-#if 0 
 void
 accm_movement_detected(uint8_t reg){
-  
   leds_on(LEDS_BLUE);
   process_post(&led_process, ledOff_event, NULL);
   process_post(&client_process, client_send_msg_event, NULL);  
-
-  //printf("~~[%u] Freefall detected! (0x%02X) -- ", ((uint16_t) clock_time())/128, reg);
-  //print_int(reg);
 }
-#endif 
 
 /* Accelerometer process */
 static struct etimer et;
@@ -72,25 +66,24 @@ PROCESS_THREAD(accel_process, ev, data) {
     accm_init();
     x_old = accm_read_axis(X_AXIS);
 
-#if 0 
     /* Register the callback functions for each interrupt */
     ACCM_REGISTER_INT1_CB(accm_movement_detected);
 
     /* Set what strikes the corresponding interrupts. Several interrupts per pin is 
       possible. For the eight possible interrupts, see adxl345.h and adxl345 datasheet. */
     accm_set_irq(ADXL345_INT_ACTIVITY, ADXL345_INT_DISABLE);
-#endif 
-
+    
     while (1) {
 	    x = accm_read_axis(X_AXIS);
 	    printf("x: %d x_old: %d \n", x, x_old);
         
         if ((x_old + error_val) < x) {
+#if 0 
             process_post(&client_process, client_send_msg_event, NULL);  
 
-            leds_on(LEDS_BLUE);
+            leds_on(LEDS_RED);
             process_post(&led_process, ledOff_event, NULL);
-
+#endif 
 	        printf("Msg to led client process sent\n");
         }
 
