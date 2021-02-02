@@ -12,7 +12,7 @@
 #define ACCM_READ_INTERVAL    CLOCK_SECOND/100 //Sampling rare 
 
 #define SIGNAL_INTRUSION_DETECTED 1
-#define SIGNAL_BUTTON_PRESSED 1
+#define SIGNAL_BUTTON_PRESSED 2
 
 /* Declare our "main" process, the client process*/
 PROCESS(client_process, "Clicker client");
@@ -79,14 +79,15 @@ PROCESS_THREAD(accel_process, ev, data) {
     
     while (1) {
 	    x = accm_read_axis(X_AXIS);
-	    printf("x: %d x_old: %d \n", x, x_old);
         
         if ((x_old + error_val) < x) {
             process_post(&client_process, client_send_msg_event, NULL);  
 
             leds_on(LEDS_RED);
             process_post(&led_process, ledOff_event, NULL);
-	        printf("Msg to led client process sent\n");
+
+            printf("x: %d x_old: %d \n", x, x_old);
+            printf("Msg to led client process sent\n");
         }
 
         x_old = x;
@@ -117,13 +118,14 @@ PROCESS_THREAD(client_process, ev, data) {
 
     static char payload[10] = {0};
     static uint8_t msg1 = SIGNAL_INTRUSION_DETECTED;
+    static uint8_t msg2 = SIGNAL_BUTTON_PRESSED;
 #if 0 
     static char msg1[] = "hej";
     static char msg2[] = "hej";
-
-	/* Activate the button sensor. */
-	SENSORS_ACTIVATE(button_sensor);
 #endif 
+
+    /* Activate the button sensor. */
+	SENSORS_ACTIVATE(button_sensor);
 
 	/* Initialize NullNet */
 	nullnet_buf = (uint8_t *)&payload;
@@ -138,16 +140,23 @@ PROCESS_THREAD(client_process, ev, data) {
 		 * event. In the case of a sensors_event, data will
 		 * point to the sensor that caused the event.
 		 * Here we wait until the button was pressed. */
-#if 0 
-		PROCESS_WAIT_EVENT_UNTIL(ev == sensors_event &&
-			data == &button_sensor);
-#endif 
-		PROCESS_WAIT_EVENT_UNTIL(ev == client_send_msg_event); 
-        printf("Msg recieved from accelerometer\n");
+		PROCESS_WAIT_EVENT_UNTIL((ev == sensors_event &&
+			data == &button_sensor) || (ev == client_send_msg_event)); 
 
-		/* Copy the string "hej" into the packet buffer. */
-        memcpy(nullnet_buf, &msg1, sizeof(msg1));
-        nullnet_len = sizeof(msg1);
+        if (ev == sensors_event && data == &button_sensor)
+        {
+            /* Copy the string "hej" into the packet buffer. */
+            memcpy(nullnet_buf, &msg2, sizeof(msg2));
+            nullnet_len = sizeof(msg2);
+            printf("Button pressed\n");
+        }
+        else 
+        {
+            /* Copy the string "hej" into the packet buffer. */
+            memcpy(nullnet_buf, &msg1, sizeof(msg1));
+            nullnet_len = sizeof(msg1);
+            printf("Accelerometer msg\n");
+        }
 
 		/* Send the content of the packet buffer using the
 		 * broadcast handle. */
